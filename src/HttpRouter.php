@@ -34,10 +34,35 @@ class HttpRouter
             return $this->router->run($request, $verb, [ $req, $res ]);
         };
     }
-
+    /**
+     * Compile a rouoter formatted string to a regular expression. Used internally.
+     * @method compile
+     * @param  string  $url  the expression to compile
+     * @param  boolean $full is the expression full (as opposed to open-ended partial), defaults to `true`
+     * @return string        the regex
+     */
     public function compile($url, $full = true)
     {
         return $this->router->compile($url, $full);
+    }
+    /**
+     * Get the current prefix
+     * @method getPrefix
+     * @return string    $prefix the prefix
+     */
+    public function getPrefix() {
+        return $this->prefix;
+    }
+    /**
+     * Set the prefix for all future URLs, used mainly internally.
+     * @method setPrefix
+     * @param  string    $prefix the prefix to prepend
+     * @return self
+     */
+    public function setPrefix($prefix) {
+        $this->router->setPrefix($prefix);
+        $this->prefix = $this->router->getPrefix();
+        return $this;
     }
     /**
      * Group a few routes together (when sharing a common prefix)
@@ -47,11 +72,9 @@ class HttpRouter
      * @return self
      */
     public function group($prefix, callable $handler) {
-        $this->router->setPrefix($prefix);
-        $this->prefix = $this->router->getPrefix();
+        $this->setPrefix($prefix);
         $handler($this);
-        $this->router->setPrefix('');
-        $this->prefix = '';
+        $this->setPrefix('');
         return $this;
     }
     /**
