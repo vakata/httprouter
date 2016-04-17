@@ -46,9 +46,12 @@ class HttpRouter
      * @param  callable $handler a function to add the actual routes from, receives the router object as parameter
      * @return self
      */
-    public function group($prefix, callable $handler)
-    {
-        $this->router->group($prefix, $handler);
+    public function group($prefix, callable $handler) {
+        $this->router->setPrefix($prefix);
+        $this->prefix = $this->router->getPrefix();
+        $handler($this);
+        $this->router->setPrefix('');
+        $this->prefix = '';
         return $this;
     }
     /**
