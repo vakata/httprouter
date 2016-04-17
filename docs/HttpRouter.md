@@ -6,6 +6,9 @@ An extended implementation of the routing class, dealing with an HTTP abstractio
 | Name | Description |
 |------|-------------|
 |[__construct](#vakata\httprouter\httprouter__construct)|Create an instance.|
+|[compile](#vakata\httprouter\httproutercompile)|Compile a rouoter formatted string to a regular expression. Used internally.|
+|[getPrefix](#vakata\httprouter\httproutergetprefix)|Get the current prefix|
+|[setPrefix](#vakata\httprouter\httproutersetprefix)|Set the prefix for all future URLs, used mainly internally.|
 |[group](#vakata\httprouter\httproutergroup)|Group a few routes together (when sharing a common prefix)|
 |[add](#vakata\httprouter\httprouteradd)|Add a route. All params are optional and each of them can be omitted independently.|
 |[get](#vakata\httprouter\httprouterget)|Shortcut for add('GET', $url, $handler)|
@@ -44,6 +47,62 @@ public function __construct (
 |  | Type | Description |
 |-----|-----|-----|
 | `$base` | `string`, `boolean` | optional parameter indicating a common part of all the URLs that will be run |
+
+---
+
+
+### vakata\httprouter\HttpRouter::compile
+Compile a rouoter formatted string to a regular expression. Used internally.  
+
+
+```php
+public function compile (  
+    string $url,  
+    boolean $full  
+) : string    
+```
+
+|  | Type | Description |
+|-----|-----|-----|
+| `$url` | `string` | the expression to compile |
+| `$full` | `boolean` | is the expression full (as opposed to open-ended partial), defaults to `true` |
+|  |  |  |
+| `return` | `string` | the regex |
+
+---
+
+
+### vakata\httprouter\HttpRouter::getPrefix
+Get the current prefix  
+
+
+```php
+public function getPrefix () : string    
+```
+
+|  | Type | Description |
+|-----|-----|-----|
+|  |  |  |
+| `return` | `string` | $prefix the prefix |
+
+---
+
+
+### vakata\httprouter\HttpRouter::setPrefix
+Set the prefix for all future URLs, used mainly internally.  
+
+
+```php
+public function setPrefix (  
+    string $prefix  
+) : self    
+```
+
+|  | Type | Description |
+|-----|-----|-----|
+| `$prefix` | `string` | the prefix to prepend |
+|  |  |  |
+| `return` | `self` |  |
 
 ---
 
