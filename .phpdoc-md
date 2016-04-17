@@ -1,0 +1,9 @@
+<?php
+return (object)[
+    'rootNamespace' => 'vakata\httprouter',
+    'destDirectory' => 'docs',
+    'format' => 'github',
+    'classes' => [
+        '\\vakata\\httprouter\\HttpRouter'
+    ],
+];

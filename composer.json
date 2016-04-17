@@ -1,0 +1,50 @@
+{
+    "name": "vakata/httprouter",
+    "description": "An extended implementation of the routing class, dealing with an HTTP abstraction and middleware.",
+    "keywords": [
+        "vakata",
+        "router"
+    ],
+    "homepage": "https://github.com/vakata/httprouter",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "vakata",
+            "email": "github@vakata.com",
+            "homepage": "http://www.vakata.com",
+            "role": "Developer"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/vakata/phpdoc-md",
+            "clean/phpdoc-md": "dev-master"
+        }
+    ],
+    "require": {
+        "php" : ">=5.4.0",
+        "vakata/router" : "^2.0.0",
+        "vakata/http" : "^1.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*",
+        "codeclimate/php-test-reporter": "dev-master",
+        "clean/phpdoc-md": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "vakata\\httprouter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "vakata\\httprouter\\test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "psr2": "php-cs-fixer fix ./src",
+        "phpdoc": "phpdoc-md"
+    }
+}
