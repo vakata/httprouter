@@ -22,4 +22,4 @@ after_script:
 
 addons:
   code_climate:
-    repo_token: 
+    repo_token: 99085d65a37d5b482ab080360a7fd97b3d92ada686dde88950ea332dc0785509
