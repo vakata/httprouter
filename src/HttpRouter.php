@@ -47,8 +47,9 @@ class HttpRouter
                         $res->setHeader($header[0], $header[1]);
                     }
                 }
-            } finally {
+            } catch (\Exception $e) {
                 ob_end_clean();
+                throw $e;
             }
 
             return $res;
