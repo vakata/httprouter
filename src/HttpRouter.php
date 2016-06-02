@@ -28,10 +28,30 @@ class HttpRouter
     {
         $this->router = new Router($base);
 
-        $this->stack[] = function (Request $req, Response $res) {
+        $this->stack[] = function (Request $req) {
             $request = $this->path($req);
             $verb = $req->getMethod();
-            return $this->router->run($request, $verb, [ $req, $res ]);
+
+            ob_start();
+            try {
+                $res = $this->router->run($request, $verb, [ $req ]);
+                if (!($res instanceof Response)) {
+                    $body = ob_get_contents();
+                    $headers = headers_list();
+                    $code = http_response_code();
+                    @header_remove();
+
+                    $res = (new Response($code ? $code : 200))->setBody(strlen($body) ? $body : (string)$res);
+                    foreach ($headers as $header) {
+                        $header = array_map('trim', explode(':', $header, 2));
+                        $res->setHeader($header[0], $header[1]);
+                    }
+                }
+            } finally {
+                ob_end_clean();
+            }
+
+            return $res;
         };
     }
     /**
@@ -276,16 +296,15 @@ class HttpRouter
     {
         $next = $this->stack[count($this->stack) - 1];
         $prefix = $this->prefix;
-        $this->stack[] = function (Request $req, Response $res) use ($handler, $next, $prefix) {
+        $this->stack[] = function (Request $req) use ($handler, $next, $prefix) {
             if ($prefix && !preg_match($this->router->compile($prefix, false), $this->path($req))) {
-                return call_user_func($next, $req, $res);
+                return call_user_func($next, $req);
             } else {
                 return call_user_func(
                     $handler,
                     $req,
-                    $res,
-                    function ($res) use ($req, $next) {
-                        return call_user_func($next, $req, $res);
+                    function () use ($req, $next) {
+                        return call_user_func($next, $req);
                     }
                 );
             }
@@ -297,12 +316,11 @@ class HttpRouter
      * Runs the router with the specified input, invokes the registered callbacks (passing through all middle layers)
      * @method run
      * @param  Request  $req the HTTP request
-     * @param  Response $res the HTTP response
      * @return Response      the populated HTTP response
      */
-    public function run(Request $req, Response $res)
+    public function run(Request $req)
     {
         $this->current = $req;
-        return call_user_func($this->stack[count($this->stack) - 1], $req, $res);
+        return call_user_func($this->stack[count($this->stack) - 1], $req);
     }
 }

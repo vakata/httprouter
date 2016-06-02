@@ -45,28 +45,28 @@ class HttpRouterTest extends \PHPUnit_Framework_TestCase
 	 * @depends testCreate
 	 */
 	public function testRoutes() {
-		$this->assertEquals(2, self::$router->run(new \vakata\http\Request('GET', 'get'), self::$res));
-		$this->assertEquals(3, self::$router->run(new \vakata\http\Request('POST', 'post'), self::$res));
-		$this->assertEquals(4, self::$router->run(new \vakata\http\Request('REPORT', 'report'), self::$res));
-		$this->assertEquals(5, self::$router->run(new \vakata\http\Request('OPTIONS', 'options'), self::$res));
-		$this->assertEquals(6, self::$router->run(new \vakata\http\Request('PUT', 'put'), self::$res));
-		$this->assertEquals(7, self::$router->run(new \vakata\http\Request('PATCH', 'patch'), self::$res));
-		$this->assertEquals(8, self::$router->run(new \vakata\http\Request('DELETE', 'delete/something'), self::$res));
-		$this->assertEquals(9, self::$router->run(new \vakata\http\Request('HEAD', 'head'), self::$res));
-		$this->assertEquals(10, self::$router->run(new \vakata\http\Request('GET', 'mixed'), self::$res));
-		$this->assertEquals(10, self::$router->run(new \vakata\http\Request('POST', 'mixed'), self::$res));
-		$this->assertEquals(11, self::$router->run(new \vakata\http\Request('GET', '/nested/path/'), self::$res));
-		$this->assertEquals('name1', self::$router->run(new \vakata\http\Request('GET', 'named/name1'), self::$res));
-		$this->assertEquals('name2', self::$router->run(new \vakata\http\Request('GET', 'named/name2'), self::$res));
-		$this->assertEquals('1',  self::$router->run(new \vakata\http\Request('GET', 'types/1'), self::$res));
-		$this->assertEquals('a',  self::$router->run(new \vakata\http\Request('GET', 'types/a'), self::$res));
-		$this->assertEquals('a0', self::$router->run(new \vakata\http\Request('GET', 'types/a0'), self::$res));
-		$this->assertEquals('@',  self::$router->run(new \vakata\http\Request('GET', 'types/@'), self::$res));
-		$this->assertEquals('$',  self::$router->run(new \vakata\http\Request('GET', '/types/@/$/'), self::$res));
-		$this->assertEquals('',   self::$router->run(new \vakata\http\Request('GET', 'optional'), self::$res));
-		$this->assertEquals('1',  self::$router->run(new \vakata\http\Request('GET', 'optional/1'), self::$res));
-		$this->assertEquals(14,   self::$router->run(new \vakata\http\Request('GET', 'regex/asdf'), self::$res));
-		$this->assertEquals(14,   self::$router->run(new \vakata\http\Request('GET', 'regex/zxcv'), self::$res));
+		$this->assertEquals(2, self::$router->run(new \vakata\http\Request('GET', 'get'))->getBody(true));
+		$this->assertEquals(3, self::$router->run(new \vakata\http\Request('POST', 'post'))->getBody(true));
+		$this->assertEquals(4, self::$router->run(new \vakata\http\Request('REPORT', 'report'))->getBody(true));
+		$this->assertEquals(5, self::$router->run(new \vakata\http\Request('OPTIONS', 'options'))->getBody(true));
+		$this->assertEquals(6, self::$router->run(new \vakata\http\Request('PUT', 'put'))->getBody(true));
+		$this->assertEquals(7, self::$router->run(new \vakata\http\Request('PATCH', 'patch'))->getBody(true));
+		$this->assertEquals(8, self::$router->run(new \vakata\http\Request('DELETE', 'delete/something'))->getBody(true));
+		$this->assertEquals(9, self::$router->run(new \vakata\http\Request('HEAD', 'head'))->getBody(true));
+		$this->assertEquals(10, self::$router->run(new \vakata\http\Request('GET', 'mixed'))->getBody(true));
+		$this->assertEquals(10, self::$router->run(new \vakata\http\Request('POST', 'mixed'))->getBody(true));
+		$this->assertEquals(11, self::$router->run(new \vakata\http\Request('GET', '/nested/path/'))->getBody(true));
+		$this->assertEquals('name1', self::$router->run(new \vakata\http\Request('GET', 'named/name1'))->getBody(true));
+		$this->assertEquals('name2', self::$router->run(new \vakata\http\Request('GET', 'named/name2'))->getBody(true));
+		$this->assertEquals('1',  self::$router->run(new \vakata\http\Request('GET', 'types/1'))->getBody(true));
+		$this->assertEquals('a',  self::$router->run(new \vakata\http\Request('GET', 'types/a'))->getBody(true));
+		$this->assertEquals('a0', self::$router->run(new \vakata\http\Request('GET', 'types/a0'))->getBody(true));
+		$this->assertEquals('@',  self::$router->run(new \vakata\http\Request('GET', 'types/@'))->getBody(true));
+		$this->assertEquals('$',  self::$router->run(new \vakata\http\Request('GET', '/types/@/$/'))->getBody(true));
+		$this->assertEquals('',   self::$router->run(new \vakata\http\Request('GET', 'optional'))->getBody(true));
+		$this->assertEquals('1',  self::$router->run(new \vakata\http\Request('GET', 'optional/1'))->getBody(true));
+		$this->assertEquals(14,   self::$router->run(new \vakata\http\Request('GET', 'regex/asdf'))->getBody(true));
+		$this->assertEquals(14,   self::$router->run(new \vakata\http\Request('GET', 'regex/zxcv'))->getBody(true));
 	}
 	/**
 	 * @depends testCreate
@@ -80,9 +80,9 @@ class HttpRouterTest extends \PHPUnit_Framework_TestCase
 		$router2 = new \vakata\httprouter\HttpRouter();
 		$router1->get('test', function () { return 1; });
 		$router2->get('test', function () { return 1; });
-		$this->assertEquals(1, $router1->run(new \vakata\http\Request('GET', 'asdf/test'), self::$res));
+		$this->assertEquals(1, $router1->run(new \vakata\http\Request('GET', 'asdf/test'))->getBody(true));
 		try {
-			$router2->run(new \vakata\http\Request('GET', 'asdf/test'), self::$res);
+			$router2->run(new \vakata\http\Request('GET', 'asdf/test'));
 			$this->assertEquals(true, false);
 		} catch (\vakata\router\RouterException $e) {
 			$this->assertEquals(true, true);
@@ -93,16 +93,16 @@ class HttpRouterTest extends \PHPUnit_Framework_TestCase
 		$router->group('prefix', function ($router) {
 			$router->get('a', function () { return 1; });
 		});
-		$this->assertEquals(1, $router->run(new \vakata\http\Request('GET', 'prefix/a'), self::$res));
+		$this->assertEquals(1, $router->run(new \vakata\http\Request('GET', 'prefix/a'))->getBody(true));
 
 		$router1 = new \vakata\httprouter\HttpRouter();
 		$router1->group('prefix', function () use ($router1) {
 			$router1->get('b', function () { return 1; });
 		});
-		$this->assertEquals(1, $router1->run(new \vakata\http\Request('GET', 'prefix/b'), self::$res));
+		$this->assertEquals(1, $router1->run(new \vakata\http\Request('GET', 'prefix/b'))->getBody(true));
 
 		$this->setExpectedException('\vakata\router\RouterException');
-		$router1->run(new \vakata\http\Request('GET', 'prefix/a'), self::$res);
+		$router1->run(new \vakata\http\Request('GET', 'prefix/a'));
 	}
 	public function testHelpers() {
 		$router = new \vakata\httprouter\HttpRouter();
