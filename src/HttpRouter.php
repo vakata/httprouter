@@ -3,7 +3,8 @@
 namespace vakata\httprouter;
 
 use vakata\router\Router;
-use vakata\http\Request;
+use vakata\http\RequestInterface;
+use vakata\http\ResponseInterface;
 use vakata\http\Response;
 use vakata\http\Url;
 
@@ -28,14 +29,14 @@ class HttpRouter
     {
         $this->router = new Router($base);
 
-        $this->stack[] = function (Request $req) {
+        $this->stack[] = function (RequestInterface $req) {
             $request = $this->path($req);
             $verb = $req->getMethod();
 
             ob_start();
             try {
                 $res = $this->router->run($request, $verb, [ $req ]);
-                if (!($res instanceof Response)) {
+                if (!($res instanceof ResponseInterface)) {
                     $body = ob_get_contents();
                     $headers = headers_list();
                     $code = http_response_code();
@@ -250,13 +251,13 @@ class HttpRouter
     /**
      * Return the path of a given request with the base stripped off.
      * @method path
-     * @param  string|Request|Url $request the request path to parse (optional, defaults to the current run, if router was run)
+     * @param  string|RequestInterface|Url $request the request path to parse (optional, defaults to the current run, if router was run)
      * @return string          the parsed request path
      */
     public function path($request = null)
     {
         $request = $request ?: $this->current;
-        if ($request instanceof Request) {
+        if ($request instanceof RequestInterface) {
             $request = $request->getUrl();
         }
         if ($request instanceof Url) {
@@ -267,7 +268,7 @@ class HttpRouter
     /**
      * Get all the relevant segments from a path string.
      * @method segments
-     * @param  string|Request|Url   $request the full path (optional, defaults to the current run, if router was run)
+     * @param  string|RequestInterface|Url   $request the full path (optional, defaults to the current run, if router was run)
      * @return array             the parsed segments
      */
     public function segments($request = null)
@@ -279,7 +280,7 @@ class HttpRouter
      * Get a relevant path segment by index.
      * @method segment
      * @param  int     $i       the desired index
-     * @param  string|Request|Url  $request a full path (optional, defaults to the current run, if router was run)
+     * @param  string|RequestInterface|Url  $request a full path (optional, defaults to the current run, if router was run)
      * @return string           the segment at that index or null
      */
     public function segment($i, $request = null)
@@ -290,23 +291,23 @@ class HttpRouter
     /**
      * Add a middleware layer
      * @method middleware
-     * @param  callable   $handler a function receiving the request, response and a callable to invoke the next layer.
+     * @param  HttpMiddlewareInterface   $handler receives the request and a callable for next layer.
      * @return self
      */
-    public function middleware(callable $handler)
+    public function middleware(HttpMiddlewareInterface $handler)
     {
         $next = $this->stack[count($this->stack) - 1];
         $prefix = $this->prefix;
-        $this->stack[] = function (Request $req) use ($handler, $next, $prefix) {
+        $this->stack[] = function (RequestInterface $req) use ($handler, $next, $prefix) {
             if ($prefix && !preg_match($this->router->compile($prefix, false), $this->path($req))) {
                 return call_user_func($next, $req);
             } else {
-                return call_user_func(
-                    $handler,
+                return $handler->handle(
                     $req,
                     function () use ($req, $next) {
                         return call_user_func($next, $req);
-                    }
+                    },
+                    $this
                 );
             }
         };
@@ -316,10 +317,10 @@ class HttpRouter
     /**
      * Runs the router with the specified input, invokes the registered callbacks (passing through all middle layers)
      * @method run
-     * @param  Request  $req the HTTP request
-     * @return Response      the populated HTTP response
+     * @param  RequestInterface  $req the HTTP request
+     * @return ResponseInterface      the populated HTTP response
      */
-    public function run(Request $req)
+    public function run(RequestInterface $req)
     {
         $this->current = $req;
         return call_user_func($this->stack[count($this->stack) - 1], $req);
