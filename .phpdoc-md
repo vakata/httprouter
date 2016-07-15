@@ -4,6 +4,9 @@ return (object)[
     'destDirectory' => 'docs',
     'format' => 'github',
     'classes' => [
-        '\\vakata\\httprouter\\HttpRouter'
+        '\\vakata\\httprouter\\Router',
+        '\\vakata\\httprouter\\RouterInterface',
+        '\\vakata\\httprouter\\MiddlewareInterface',
+        '\\vakata\\httprouter\\CallableMiddleware'
     ],
 ];
