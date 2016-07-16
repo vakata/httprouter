@@ -16,6 +16,6 @@ class CallableMiddleware implements MiddlewareInterface
     }
     public function handle(RequestInterface $request, callable $next, array $segments = [])
     {
-        return call_user_func($this->handler, $request, $next);
+        return call_user_func($this->handler, $request, $next, $segments);
     }
 }
