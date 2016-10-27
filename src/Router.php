@@ -44,7 +44,6 @@ class Router extends BaseRouter implements RouterInterface
     }
     /**
      * Add a middleware layer
-     * @method middleware
      * @param  HttpMiddlewareInterface   $handler receives the request and a callable for next layer.
      * @return self
      */
@@ -71,7 +70,6 @@ class Router extends BaseRouter implements RouterInterface
 
     /**
      * Runs the router with the specified input, invokes the registered callbacks (passing through all middle layers)
-     * @method runRequest
      * @param  RequestInterface  $req the HTTP request
      * @return ResponseInterface      the populated HTTP response
      */
